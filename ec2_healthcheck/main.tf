@@ -1,14 +1,6 @@
 provider "aws" {
-  region = "eu-west-3"
+  region = "us-east-2"
 }
-
-variable "vpc_cidr_block" {}
-variable "subnet_cidr_block" {}
-# variable avail_zone {}
-variable "env_prefix" {}
-variable "instance_type" {}
-variable "my_ip" {}
-variable "public_key_location" {}
 
 data "aws_ami" "amazon-linux-image" {
   most_recent = true
@@ -111,7 +103,7 @@ resource "aws_key_pair" "ssh-key" {
 }
 
 output "server-ip" {
-  value = aws_instance.myapp-server.public_ip
+  value = aws_instance.myapp-server[0].public_ip
 }
 
 data "aws_availability_zones" "available" {
@@ -119,6 +111,7 @@ data "aws_availability_zones" "available" {
 }
 
 resource "aws_instance" "myapp-server" {
+  count                       = var.instances_count
   ami                         = data.aws_ami.amazon-linux-image.id
   instance_type               = var.instance_type
   key_name                    = "myapp-key"
@@ -128,7 +121,7 @@ resource "aws_instance" "myapp-server" {
   availability_zone           = data.aws_availability_zones.available.names[0]
 
   tags = {
-    Name = "${var.env_prefix}-server"
+    Name = "${var.env_prefix}-server-${count.index}"
   }
 
   user_data = file("entry-script.sh")
