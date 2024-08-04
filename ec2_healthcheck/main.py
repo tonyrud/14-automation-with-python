@@ -10,7 +10,7 @@ def check_instance_status():
         IncludeAllInstances=True
     )
     for status in statuses['InstanceStatuses']:
-        print(status)
+        # print(status)
         ins_status = status['InstanceStatus']['Status']
         sys_status = status['SystemStatus']['Status']
         state = status['InstanceState']['Name']

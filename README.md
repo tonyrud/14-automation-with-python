@@ -4,14 +4,7 @@
 
 ### Terraform
 
-copy `terraform/terraform.tfvars.example` to `terraform/terraform.tfvars`
-
-- change `instances_count` to the number of EC2s to create. Default: 1
-- add your public ip address
-
-```bash
-terraform init && terraform apply
-```
+Use [terraform repo](https://github.com/tonyrud/terraform-learn) for resource creation
 
 ### Deps
 
@@ -21,16 +14,24 @@ pip install boto3 schedule
 
 ## List VPCs
 
-`cd vpcs`
-
 ```bash
-python main.py
+python vpcs/main.py
 ```
 
 ## EC2 Health Checks
 
-`cd ec2_healthcheck`
+```bash
+python ec2_healthcheck/main.py
+```
+
+## EC2 Add Tags
 
 ```bash
-python main.py
+python ec2_add_tags/main.py
+```
+
+## EKS Check Cluster
+
+```bash
+python eks_status/main.py
 ```
