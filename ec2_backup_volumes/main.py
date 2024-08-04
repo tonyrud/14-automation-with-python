@@ -22,7 +22,8 @@ def create_volume_snapshots():
         print(new_snapshot)
 
 # create_volume_snapshots()
-schedule.every().day.do(create_volume_snapshots)
+# schedule.every().day.do(create_volume_snapshots)
+schedule.every(30).seconds.do(create_volume_snapshots)
 
 while True:
     schedule.run_pending()
