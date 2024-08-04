@@ -1,4 +1,7 @@
 provider "aws" {
+  # apply and destroy operations will be performed in this region
+  # TODO: make configurable
+  # region = "us-east-1"
   region = "us-east-2"
 }
 
