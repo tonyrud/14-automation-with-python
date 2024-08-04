@@ -8,5 +8,5 @@ variable "public_key_location" {}
 variable "instances_count" {
   description = "Total number of instances to launch"
   type        = number
-  default     = 2
+  default     = 1
 }
