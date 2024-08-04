@@ -1,8 +1,0 @@
-# replace the values with your own
-vpc_cidr_block      = "10.0.0.0/16"
-subnet_cidr_block   = "10.0.1.0/24"
-env_prefix          = "dev"
-instance_type       = "t2.micro"
-my_ip               = ""
-public_key_location = "~/.ssh/id_rsa.pub"
-instances_count     = 3
