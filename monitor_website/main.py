@@ -2,29 +2,29 @@ import requests
 import smtplib
 import os
 import paramiko
-# import linode_api4
+import boto3
 import time
 import schedule
 
 EMAIL_ADDRESS = os.environ.get('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
-# LINODE_TOKEN = os.environ.get('LINODE_TOKEN')
 
+def restart_server_and_container():
+    # restart linode server
+    print('Rebooting the server...')
+    ec2_resource = boto3.resource('ec2', region_name='us-east-2')
+    ec2_client = boto3.client('ec2', region_name="us-east-2")
+    ec2_client.reboot_instances(InstanceIds=['i-0e5d938204a8cce42'])
 
-# def restart_server_and_container():
-#     # restart linode server
-#     print('Rebooting the server...')
-#     client = linode_api4.LinodeClient(LINODE_TOKEN)
-#     nginx_server = client.load(linode_api4.Instance, 52236040)
-#     nginx_server.reboot()
-
-#     # restart the application
-#     while True:
-#         nginx_server = client.load(linode_api4.Instance, 52236040)
-#         if nginx_server.status == 'running':
-#             time.sleep(5)
-#             restart_container()
-#             break
+    # restart the application
+    while True:
+        instance = ec2_resource.Instance('i-0e5d938204a8cce42')
+        print(instance.state['Name'])
+        if instance.state['Name'] == 'running':
+            print('Server is up and running! Restarting the container in 15 seconds...')
+            time.sleep(15)
+            restart_container()
+            break
 
 
 def send_notification(email_msg):
@@ -36,15 +36,20 @@ def send_notification(email_msg):
         message = f"Subject: SITE DOWN\n{email_msg}"
         smtp.sendmail(EMAIL_ADDRESS, EMAIL_ADDRESS, message)
 
-
 def restart_container():
     print('Restarting the application...')
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(hostname='3.142.252.102', username='root', key_filename='/Users/tonyrudny/.ssh/id_rsa')
-    stdin, stdout, stderr = ssh.exec_command('docker start ee6b82b80ecd')
+    ssh.connect(hostname='3.142.252.102', username='ec2-user', key_filename='/Users/tonyrudny/.ssh/id_rsa')
+    stdin, stdout, stderr = ssh.exec_command('sudo systemctl start docker')
+    stdin, stdout, stderr = ssh.exec_command('docker start nginx')
     print(stdout.readlines())
     ssh.close()
+
+# testing
+# send_notification('Test message')
+# restart_server_and_container()
+# restart_container()
 
 
 def monitor_application():
@@ -61,7 +66,7 @@ def monitor_application():
         print(f'Connection error happened: {ex}')
         msg = 'Application not accessible at all'
         send_notification(msg)
-        # restart_server_and_container()
+        restart_server_and_container()
 
 
 schedule.every(10).seconds.do(monitor_application)
