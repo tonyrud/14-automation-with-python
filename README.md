@@ -41,3 +41,13 @@ python eks_status/main.py
 ```bash
 python ec2_backup_volumes/main.py
 ```
+
+## Monitor Web App
+
+Use terraform repo to create a single ec2 instance. The script will start a simple nginx app on port 8080
+
+`direnv` is used for ENV vars. Copy `.envrc.example` to `.envrc`, and add email and password values. Run `direnv allow`
+
+```bash
+python monitor_website/main.py
+```

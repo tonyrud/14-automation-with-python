@@ -1,0 +1,2 @@
+export EMAIL_ADDRESS="email"
+export EMAIL_PASSWORD="password"
